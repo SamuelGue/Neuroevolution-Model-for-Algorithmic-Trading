@@ -1,0 +1,48 @@
+{
+    "ADX": {
+        "columns": ["ADX", "+di", "-di"],
+        "interpretation": "The ADX (Average Directional Index) indicates the strength of a trend. ADX will only identify a trend that is already established, it does not predict changes in direction. ADX values below *20* indicates a weak trend. ADX values above *40* indicates a strong trend. ADX values above *50* indicates an exceptionally strong trend. One of the best buy signals is when ADX turns up when below both DI+ and DI-. You would sell when ADX turns back down.",
+        "y_lines": [20, 40, 50]
+    },
+    "CCI": {
+        "columns": ["CCI"],
+        "interpretation": "The CCI (Commodity Channel Index) helps identify price reversals, price extremes, and trend strength. Readings above *100* indicate an overbought condition. Readings below *-100* indicate an oversold condition. When a stock is overbought, it is indicative that it is undervalued and may increase in price soon. When a stock is oversold, it is indicative that it is overvalued and may decrease in price soon. When the CCI moves above 100, it can be treated as a buy signal and the position should be closed when the CCI moves back below 100. When the CCI moves below -100, a sell signal is given, and the position should be closed when the CCI moves back above -100.",
+        "y_lines": [-100, 100]
+    },
+    "VI": {
+        "columns": ["VI+", "VI-"],
+        "interpretation": "The VI (Vortex Indicator) identifies the start of a new trend or the continuation of an existing trend. When VI+ is above VI-, it indicates a that the market is trending upwards. When VI- is above VI+, it indicates that the market is trending downwards. The intersection of VI+ and VI- are the potential change of trend points.",
+        "y_lines": []
+    },
+    "RSI": {
+        "columns": ["RSI"],
+        "interpretation": "The RSI (Relative Strength Index) is an indicator used to chart current and historical strength or weakness of a stock. Uptrends generally trade between 40 and 80, while downtrends generally trade between 60 and 20. A stock is generally considered overbought if the RSI exceeds *70* and oversold if it falls below *30*. When the RSI moves above 70, it can be treated as a sell signal and the position should be closed when the RSI moves back below 70.",
+        "y_lines": [30, 70]
+    },
+    "Williams %R": {
+        "columns": ["Percent_R"],
+        "interpretation": "The Williams %R relates the closing price to the highs and lows in the past N periods. Values above *-20* indicate an overbought condition. Values below *-80* indicate an oversold condition. Williams' rule for buying was: If %R reaches -100%, five periods pass since -100% was reached, and then %R rises above -95% or -85%. Williams' rule for selling was if %R reaches 0%, five periods pass since 0% was reached, and then %R falls below -5% or -15%.",
+        "y_lines": [-80, -20]
+    },
+    "FI": {
+        "columns": ["FI"],
+        "interpretation": "The FI (Force Index) is used to illustrate how strong the actual buying or selling pressure is. High positive values mean a strong rising trend, and low values signify a strong downward trend.",
+        "y_lines": []
+    },
+    "OBV": {
+        "columns": ["OBV"],
+        "interpretation": "The OBV (On-Balance Volume) relates price and volume in the stock market. When prices are rising, OBV should also rise. If OBV fails to go past its previous rally high, then this is a negative divergaence, suggesting a weak move.",
+        "y_lines":  []
+    },
+    "VPT": {
+        "columns": ["VPT"],
+        "interpretation": "The VPT (Volume Price Trend) relates price and volume in the stock market. When prices are rising, VPT should also rise. If VPT fails to go past its previous rally high, then this is a negative divergaence, suggesting a weak move.",
+        "y_lines":  []
+    },
+    "ADI": {
+        "columns": ["ADI"],
+        "interpretation": "The ADI (Accumulation/Distribution Index) is similar to the On-Balance Volume.",
+        "y_lines":  []
+    }
+}
+
