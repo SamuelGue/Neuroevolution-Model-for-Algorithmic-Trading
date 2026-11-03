@@ -17,16 +17,11 @@ import kagglehub
 import websockets
 import sys
 import requests
-from dotenv import load_dotenv
 
-from alpaca.trading.client import TradingClient
-from alpaca.data.historical import StockHistoricalDataClient
-from alpaca.data.requests import StockBarsRequest
-from alpaca.data.timeframe import TimeFrame
 from datetime import datetime
 import plotly.graph_objects as go
 from Evaluators import TopicEvaluator
-from Model_Functionality import NEATmodel, setup_neat_model
+from Model_Functionality import TargetExposureNEATModel, setup_target_exposure_neat_model, backtest_target_exposure_genome
 from ModelInputs import setup_dataframe
 import time
 
@@ -100,7 +95,7 @@ def train_model(training_data, config_path):
     prices = training_data
     print(prices)
     time.sleep(5)
-    neat_model = NEATmodel(model_config_path=config_path,prices=prices)
+    neat_model = TargetExposureNEATModel(model_config_path=config_path,prices=prices)
 
     winner = neat_model.train()
     neat_model._create_graph(winner)
@@ -120,9 +115,49 @@ if st.sidebar.button("Confirm"):
 
 if st.session_state.training_data_ready:
     if st.sidebar.button("Train Model"):
-        train_model(st.session_state.training_data, "config-feedforward.ini")
+        live_slot = st.empty()
+
+        def show_live_network(generation, best_genome, image):
+            live_slot.image(image, caption=f"Generation {generation} - best fitness {best_genome.fitness:.4f}")
+
+        winner = setup_target_exposure_neat_model(
+            "config-feedforward-target-exposure.ini",
+            st.session_state.training_data,
+            on_generation=show_live_network,
+        )
+        st.session_state.winner = winner
         st.session_state.model_trained = True
         st.sidebar.success("Model trained successfully.")
 
     if st.session_state.model_trained:
-        st.image("winner-net.png", caption="Winning Neural Network Architecture", width="stretch")
+        st.image("winner_net.png", caption="Winning Neural Network Architecture", width="stretch")
+
+if st.session_state.model_trained:
+    st.sidebar.header("Test Model")
+    test_ticker = st.sidebar.selectbox("Stock ticker to test on:", symbols, key="test_ticker")
+    test_balance = st.sidebar.number_input("Starting balance:", min_value=1.0, value=1000.0, key="test_balance")
+
+    if st.sidebar.button("Run Test"):
+        test_df = setup_dataframe(pd.read_csv(path+"/stocks/"+test_ticker+".csv"), period=14)
+        st.session_state.test_result = (test_ticker,) + backtest_target_exposure_genome(
+            st.session_state.winner,
+            "config-feedforward-target-exposure.ini",
+            test_df,
+            balance=test_balance,
+        )
+
+    if "test_result" in st.session_state:
+        result_ticker, result_df, summary = st.session_state.test_result
+        st.header(f"Model Test on {result_ticker}")
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Model return", f"{summary['model_return']:.2%}")
+        col2.metric("Buy and hold return", f"{summary['buy_and_hold_return']:.2%}")
+        col3.metric("Max drawdown", f"{summary['max_drawdown']:.2%}")
+
+        fig = go.Figure(data=[go.Scatter(x=result_df["Date"], y=result_df[c], mode="lines", name=c) for c in ["Model", "Buy and Hold"]])
+        fig.update_layout(title=f"{result_ticker}: Model vs Buy and Hold", yaxis=dict(title=dict(text="Equity (USD)")), xaxis=dict(title=dict(text="Date")))
+        st.plotly_chart(fig, width="stretch")
+
+        exposure_fig = go.Figure(data=[go.Scatter(x=result_df["Date"], y=result_df["Exposure"], mode="lines", name="Exposure")])
+        exposure_fig.update_layout(title="Model exposure over time", yaxis=dict(title=dict(text="Exposure (fraction of equity)")), xaxis=dict(title=dict(text="Date")))
+        st.plotly_chart(exposure_fig, width="stretch")
