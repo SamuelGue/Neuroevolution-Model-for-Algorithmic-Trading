@@ -4,7 +4,6 @@ import neat
 import pandas as pd
 import numpy as np
 import visualizer
-import graphviz
 
 class BasicNEATmodel():
     def __init__(self, model_config_path, prices, balance = 1000.0, max_generations=300):
