@@ -1,5 +1,3 @@
-from turtle import st
-
 import neat
 import pandas as pd
 import numpy as np
